@@ -1,110 +1,131 @@
-# Dexter 🤖
+# TAFIN
 
-Dexter is an autonomous financial research agent that thinks, plans, and learns as it works. It performs analysis using task planning, self-reflection, and real-time market data. Think Claude Code, but built specifically for financial research.
+TAFIN (Think, Analyze, FINance) is an autonomous financial research agent that plans, executes, and validates multi-step market analysis. It decomposes complex questions into actionable tasks, gathers real-time financial statements, and synthesises data-backed answers—all from the command line.
 
-
-<img width="979" height="651" alt="Screenshot 2025-10-14 at 6 12 35 PM" src="https://github.com/user-attachments/assets/5a2859d4-53cf-4638-998a-15cef3c98038" />
+<img width="979" height="651" alt="TAFIN screenshot" src="https://github.com/user-attachments/assets/5a2859d4-53cf-4638-998a-15cef3c98038" />
 
 ## Overview
 
-Dexter takes complex financial questions and turns them into clear, step-by-step research plans. It runs those tasks using live market data, checks its own work, and refines the results until it has a confident, data-backed answer.  
+TAFIN turns broad financial questions into clear research plans. It runs those plans using live market data, evaluates progress after each step, and iterates until it produces a confident response.
 
-It’s not just another chatbot.  It’s an agent that plans ahead, verifies its progress, and keeps iterating until the job is done.
-
-**Key Capabilities:**
-- **Intelligent Task Planning**: Automatically decomposes complex queries into structured research steps
-- **Autonomous Execution**: Selects and executes the right tools to gather financial data
-- **Self-Validation**: Checks its own work and iterates until tasks are complete
-- **Real-Time Financial Data**: Access to income statements, balance sheets, and cash flow statements
-- **Safety Features**: Built-in loop detection and step limits to prevent runaway execution
-
-[![Twitter Follow](https://img.shields.io/twitter/follow/virattt?style=social)](https://twitter.com/virattt)
+**Key capabilities**
+- Task planning with guardrails against runaway loops
+- Tool-assisted execution for financial data collection
+- Automated self-validation of progress
+- Access to income statements, balance sheets, and cash flow statements
+- Concise, data-rich answers ready for follow-up analysis
 
 ## Quick Start
 
 ### Prerequisites
 
 - Python 3.10 or higher
-- [uv](https://github.com/astral-sh/uv) package manager
-- OpenAI API key
-- Financial Datasets API key (get one at [financialdatasets.ai](https://financialdatasets.ai))
+- OpenAI API key (`TAFIN_OPENAI_API_KEY` or `OPENAI_API_KEY`)
+- Financial Datasets API key (`TAFIN_FINANCIAL_DATASETS_API_KEY` or `FINANCIAL_DATASETS_API_KEY`)
+- *(Optional but recommended)* [uv](https://github.com/astral-sh/uv) package manager for fast virtualenv + dependency management
 
-### Installation
+### 1. Clone the repository
 
-1. Clone the repository:
 ```bash
-git clone https://github.com/virattt/dexter.git
-cd dexter
+git clone https://github.com/virattt/tafin.git
+cd tafin
 ```
 
-2. Install dependencies with uv:
+### 2. Install dependencies
+
+**Option A – using uv (recommended)**
 ```bash
+# Install uv if you do not already have it
+curl -LsSf https://astral.sh/uv/install.sh | sh
+# On Windows PowerShell:
+# iwr https://astral.sh/uv/install.ps1 -useb | iex
+
 uv sync
 ```
 
-3. Set up your environment variables:
+**Option B – using pip**
 ```bash
-# Copy the example environment file
+python -m venv .venv
+# Linux/macOS
+source .venv/bin/activate
+# Windows (PowerShell)
+.venv\Scripts\Activate.ps1
+
+python -m pip install -e .
+```
+
+### 3. Configure API keys
+
+```bash
 cp env.example .env
 
-# Edit .env and add your API keys
-# OPENAI_API_KEY=your-openai-api-key
-# FINANCIAL_DATASETS_API_KEY=your-financial-datasets-api-key
+# Edit .env and set your credentials
+# TAFIN_OPENAI_API_KEY=your-openai-api-key
+# TAFIN_FINANCIAL_DATASETS_API_KEY=your-financial-datasets-api-key
+# TAFIN_SERPER_API_KEY=your-serper-api-key
+# TAFIN_ALPHA_VANTAGE_API_KEY=your-alpha-vantage-key
 ```
 
-### Usage
+### 4. Run TAFIN
 
-Run Dexter in interactive mode:
 ```bash
-uv run dexter-agent
+# With uv (either command works)
+uv run tafin
+uv run tafin-agent
+
+# Without uv (after pip install -e .)
+python -m tafin.cli
 ```
 
-### Example Queries
+If an OpenAI key is not configured, TAFIN automatically falls back to a **search-only mode** powered by Serper and Alpha Vantage so you can still gather market context.
 
-Try asking Dexter questions like:
-- "What was Apple's revenue growth over the last 4 quarters?"
-- "Compare Microsoft and Google's operating margins for 2023"
-- "Analyze Tesla's cash flow trends over the past year"
-- "What is Amazon's debt-to-equity ratio based on recent financials?"
+From there, use the `tafin>` prompt to ask questions such as:
+- What was Apple's revenue growth over the last four quarters?
+- Compare Microsoft and Google's operating margins for 2023.
+- Analyse Tesla's cash flow trends over the past year.
+- What is Amazon's debt-to-equity ratio based on recent financials?
 
-Dexter will automatically:
-1. Break down your question into research tasks
-2. Fetch the necessary financial data
-3. Perform calculations and analysis
-4. Provide a comprehensive, data-rich answer
+TAFIN will:
+1. Break down the query into structured tasks
+2. Call the right tools to gather data
+3. Validate progress after each step
+4. Present a concise answer with the key numbers
 
 ## Architecture
 
-Dexter uses a multi-agent architecture with specialized components:
+TAFIN uses a modular agent stack:
 
-- **Planning Agent**: Analyzes queries and creates structured task lists
-- **Action Agent**: Selects appropriate tools and executes research steps
-- **Validation Agent**: Verifies task completion and data sufficiency
-- **Answer Agent**: Synthesizes findings into comprehensive responses
+- **Planning agent**: analyses the query and produces task lists
+- **Action agent**: decides which tool to run next
+- **Validation agent**: checks whether the current task is complete
+- **Answer agent**: composes the final response from collected outputs
 
 ## Project Structure
 
 ```
-dexter/
+tafin/
 ├── src/
-│   ├── dexter/
-│   │   ├── agent.py      # Main agent orchestration logic
-│   │   ├── model.py      # LLM interface
-│   │   ├── tools.py      # Financial data tools
-│   │   ├── prompts.py    # System prompts for each component
-│   │   ├── schemas.py    # Pydantic models
-│   │   ├── utils/        # Utility functions
-│   │   └── cli.py        # CLI entry point
+│   └── tafin/
+│       ├── agent.py      # Main agent orchestration logic
+│       ├── model.py      # LLM interface (OpenAI gpt-4o)
+│       ├── tools.py      # Financial Datasets API helpers
+│       ├── prompts.py    # System prompts for each component
+│       ├── schemas.py    # Pydantic models used across agents
+│       ├── cli.py        # CLI entry point
+│       └── utils/        # Logging, UI, intro banner
 ├── pyproject.toml
+├── package.json
+├── index.js
+├── env.example
 └── uv.lock
 ```
 
 ## Configuration
 
-Dexter supports configuration via the `Agent` class initialization:
+The `Agent` class can be tuned to suit your workflow:
 
 ```python
-from dexter.agent import Agent
+from tafin.agent import Agent
 
 agent = Agent(
     max_steps=20,              # Global safety limit
@@ -112,18 +133,16 @@ agent = Agent(
 )
 ```
 
-## How to Contribute
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+4. Push the branch
+5. Open a pull request
 
-**Important**: Please keep your pull requests small and focused.  This will make it easier to review and merge.
-
+Please keep pull requests focused to simplify reviews.
 
 ## License
 
 This project is licensed under the MIT License.
-

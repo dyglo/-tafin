@@ -3,7 +3,7 @@ requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "dexter"
+name = "tafin"
 version = "0.1.0"
 description = "AI agent for financial analysis."
 authors = []
@@ -19,7 +19,8 @@ dependencies = [
 ]
 
 [project.scripts]
-dexter-agent = "dexter.cli:main"
+tafin = "tafin.cli:main"
+tafin-agent = "tafin.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

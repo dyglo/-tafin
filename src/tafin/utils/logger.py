@@ -1,15 +1,15 @@
-from dexter.utils.ui import UI
+from tafin.utils.ui import UI
 
 
 class Logger:
-    """Logger that uses the new interactive UI system."""
-    
+    """Logging facade that delegates to the interactive UI."""
+
     def __init__(self):
         self.ui = UI()
         self.log = []
 
     def _log(self, msg: str):
-        """Print immediately and keep in log."""
+        """Print immediately and keep in log history."""
         print(msg, flush=True)
         self.log.append(msg)
 
@@ -29,11 +29,11 @@ class Logger:
         self.ui.print_tool_run(tool, str(result)[:100])
 
     def log_risky(self, tool: str, input_str: str):
-        self.ui.print_warning(f"Risky action {tool}({input_str}) — auto-confirmed")
+        self.ui.print_warning(f"Risky action {tool}({input_str}) auto-confirmed")
 
     def log_summary(self, summary: str):
         self.ui.print_answer(summary)
-    
+
     def progress(self, message: str, success_message: str = ""):
         """Return a progress context manager for showing loading states."""
         return self.ui.progress(message, success_message)

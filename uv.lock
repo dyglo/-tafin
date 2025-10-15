@@ -118,7 +118,7 @@ wheels = [
 ]
 
 [[package]]
-name = "dexter"
+name = "tafin"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
